@@ -5,7 +5,7 @@ import pandas as pd
 import statsmodels.tsa.api as tsa
 import yfinance as yf
 import matplotlib.pyplot as plt
-import streamlit
+import streamlit as st
 from statsmodels.tsa.stattools import adfuller
 
 class StockData():
@@ -22,20 +22,18 @@ class StockData():
     def getDividends(self):
         return self.ticker.dividends
 
-
     def getFinancialData(self, ticker):
         return self.ticker.financials
 
-    # with open('financials.csv', 'w') as file:
-    #     file.write()
+    # output financial data for 'ticker' to ticker_financials.csv
     def output_financials_to_csv(self, ticker):
-        self.getFinancialData('GOOG').to_csv('financials.csv')
+        self.getFinancialData('GOOG').to_csv('_'.join([self.ticker.ticker, 'financials.csv']))
 
 
-    # holdings = data.funds_data.top_holdings
+    def getPrices(self, startDate, endDate):
+        prices_df = yf.download(self.ticker.ticker, startDate, endDate)
+        prices_df.to_csv('_'.join([self.ticker, 'prices.csv']))
 
-
-    return data.financials
 
 
 # Filter/screen by characteristics or query
@@ -58,11 +56,21 @@ def get_PE_ratio(ticker):
 
     plt.plot(company_PE_ratios)
 
-yfinance.Industry('').top_companies
-yfinance.Industry('').top_growth_companies
+
+# yfinance.Industry('').top_companies
+# yfinance.Industry('').top_growth_companies
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
-    get_PE_ratio("XLV")
+    stock = StockData('GOOG')
+    stock.output_financials_to_csv('GOOG')
+    #get_PE_ratio("XLV")
+
 
 
