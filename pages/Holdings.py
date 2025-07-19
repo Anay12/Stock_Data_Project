@@ -7,7 +7,7 @@ import os
 from sqlalchemy import create_engine, text
 from sqlalchemy import Table, Column, Integer, String, Float, MetaData
 
-file_path = "holdings_df.csv"
+# file_path = "holdings_df.csv"
 
 metadata = MetaData()
 
@@ -21,30 +21,41 @@ holdings_table = Table(
 
 engine = create_engine("sqlite:///holdings.db")
 metadata.create_all(engine)
-# class Holdings:
-#     def __init__(self):
-#         self.holdings = []
+
 if not engine.dialect.has_table(engine.connect(), "holdings"):
     holdings_df = pd.DataFrame(columns=['id', 'Ticker', 'Holding Type', 'Holding Size', 'Date Added'])
     holdings_df.to_sql("holdings", engine, if_exists="replace", index=False)
 
-    # def get_holdings(self):
-    #     return self.holdings
-    #
-    # def set_holdings(self, holdings):
-    #     self.holdings = holdings
+
+def read_holdings():
+    return pd.read_sql("SELECT * FROM holdings", engine).set_index('id')
+
+
+# class Holdings:
+#     def __init__(self):
+#         self.holdings = []
+#
+#     # def get_holdings(self):
+#     #     return self.holdings
+#     #
+#     # def set_holdings(self, holdings):
+#     #     self.holdings = holdings
+
 
 # write_header = not os.path.exists(file_path) or os.path.getsize(file_path) == 0
 # if write_header:
 #     holdings_object = Holdings()
 #     holdings = holdings_object.get_holdings()
 
+
+# holdings_obj = Holdings()
+
 tab1, tab2 = st.tabs(["Overview", "Add a Holding"])
 
 with tab1:
     # holdings = pd.read_sql_table('test', 'jdbc:postgresql://localhost:5432/postgres')
         try:
-            holdings_df = pd.read_sql("SELECT * FROM holdings", engine).set_index('id')
+            holdings_df = read_holdings()
 
             if not holdings_df.empty:
                 st.header("All Holdings")
@@ -52,7 +63,7 @@ with tab1:
 
             refresh_pie_chart_button = st.button("Refresh")
 
-            if not holdings_df.empty and refresh_pie_chart_button:
+            if not holdings_df.empty or refresh_pie_chart_button:
                 holdings_df['Holding Size'] = pd.to_numeric(holdings_df['Holding Size'], errors='coerce')
                 chart = px.pie(holdings_df, names='Ticker', values='Holding Size')
                 st.plotly_chart(chart)
@@ -91,15 +102,15 @@ with tab2:
 
     # delete a holding
     with st.expander("🗑️ Delete a Holding"):
-        holdings = pd.read_sql("SELECT * FROM holdings", engine).set_index('id')
+        holdings_df = pd.read_sql("SELECT * FROM holdings", engine).set_index('id')
 
-    if not holdings.empty:
-        st.dataframe(holdings)
+    if not holdings_df.empty:
+        st.dataframe(holdings_df)
 
-        holdings['label'] = holdings.apply(
+        holdings_df['label'] = holdings_df.apply(
             lambda row: f"Holding: {row['Ticker']}  |  Shares: {row['Holding Size']}", axis=1
         )
-        label_to_id = dict(zip(holdings['label'], holdings['id']))
+        label_to_id = dict(zip(holdings_df['label'], holdings_df.index))
 
         selected_label = st.selectbox("Select a holding to delete:", list(label_to_id.keys()))
         selected_id = label_to_id[selected_label]
