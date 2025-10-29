@@ -8,24 +8,39 @@
 
 <body class="p-4">
 <div class="container">
+    <form method="POST" action="/Holdings/Add" class="mb-4">
+        <div class="row g-2">
+            <div class="col-md-2">
+                <input class="form-control" type="text" name="ticker" placeholder="Ticker" required>
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" type="text" name="holding_type" placeholder="Holding Type">
+                <input class="form-control" type="number" name="holding_size" placeholder="Holding Size" required>
+            </div>
+            <div>
+                <input class="form-control" type="date" name="date_added" placeholder="Date Added" required>
+                <button class="btn btn-primary w-100" type="submit">Add Holding</button>
+            </div>
+        </div>
+    </form>
 
     <table class="table table-bordered">
         <thead class="table-light">
             <tr>
-                <th>Symbol</th>
-                <th>Name</th>
-                <th>Shares</th>
-                <th>Price</th>
-                <th>Total</th>
-
+                <th>id</th>
+                <th>Ticker</th>
+                <th>Holding Type</th>
+                <th>Holding Size</th>
+                <th>Date Added</th>
             </tr>
         </thead>
+
         <tbody>
             {% for holding in holdings %}
             <tr>
-                <td><a class="btn btn-primary btn-sm" href="/Parts/Edit/{{ part[0] }}">Edit</a></td>
-                <td>{{ holding.symbol }}</td>
-                <td>{{ holding.name }}</td>
+                <td><a class="btn btn-primary btn-sm" href="/Holdings/Edit/{{ hold[0] }}">Edit</a></td>
+                <td>{{ holding.id }}</td>
+                <td>{{ holding.Ticker }}</td>
                 <td>{{ holding.shares }}</td>
                 <td>{{ holding.price }}</td>
                 <td>{{ holding.total }}</td>
