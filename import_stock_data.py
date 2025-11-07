@@ -37,7 +37,7 @@ class Stock:
 
     # output financial data for 'ticker' to ticker_financials.csv
     def output_financials_to_csv(self, ticker):
-        self.getFinancialData('GOOG').to_csv('_'.join([self.ticker.ticker, 'financials.csv']))
+        self.getFinancialData('GOOG').to_csv('_'.join([self.ticker.ticker, 'data/financials.csv']))
 
     # output price information from startDate to endDate to .csv file
     def getPrices(self, startDate, endDate):
