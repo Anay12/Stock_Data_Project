@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<header>
+    <h1> Stock Portfolio Project </h1>
+</header>
+
+<nav>
+    <a href="{{ url_for('index') }}" class="{% if active_page == 'index' %}active{% endif %}">
+        Home
+    </a>
+    <a href="{{ url_for('holdings') }}" class="{% if active_page == 'holdings'%}active{% endif %}">
+        Holdings
+    </a>
+    <a href="{{ url_for('dividends') }}" class="{% if active_page == 'dividends'%}active{% endif %}">
+        Dividends
+    </a>
+</nav>
+
+<style>
+    nav {
+        background-color: #f0f0f0;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+    }
+    nav a {
+        text-decoration: None;
+        color: #333;
+        padding: 8px 12px;
+        border-radius: 5px;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    nav a:hover {
+        background-color: #ddd;
+    }
+    nav a.active {
+        background-color: #4CAF50;
+        /*color: white;*/
+    }
+
+</style>
