@@ -1,5 +1,4 @@
-from database import Base, engine
-from sqlalchemy import text
+from Database.database import Base, engine
 
 """ Creates all tables defined in models.py """
 

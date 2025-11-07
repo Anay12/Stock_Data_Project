@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, Date
-from database import Base
+from Database.database import Base
 
 class Holding(Base):
     __tablename__ = "holdings"

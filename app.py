@@ -4,8 +4,8 @@ from datetime import datetime
 from sqlalchemy import select
 import plotly.express as px
 import plotly.io as pio
-from database import SessionLocal, engine
-from models import Holding
+from Database.database import SessionLocal, engine
+from Database.models import Holding
 
 app = Flask(__name__)
 
