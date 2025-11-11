@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, Float, Date
 from Database.database import Base
 
+# from Stock import Stock
+
 class Holding(Base):
     __tablename__ = "holdings"
 
@@ -15,5 +17,6 @@ class Holding(Base):
         return (f"<Holdings(id='{self.id}', Ticker='{self.ticker}', Holding Type='{self.holdingType}', Holding Size="
                 f"'{self.holdingSize}', Date Added='{self.dateAdded}', Date Edited='{self.dateEdited}')>")
 
-
+    # def to_stock(self):
+    #     return Stock(ticker=self.ticker, holding_type=self.holdingType, quantity=self.holdingSize)
 
