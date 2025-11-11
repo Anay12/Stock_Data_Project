@@ -31,6 +31,7 @@
         <h2> Add Holding </h2>
         <form method="POST" action="/Holdings/add" class="mb-4">
             <fieldset>
+<!--                <legend>Add Holding</legend>-->
                 <div class="row g-2">
                     <div class="col-md-2">
                         <input class="form-control" type="text" id="ticker" name="ticker" placeholder="Ticker" required>
@@ -75,9 +76,19 @@
                 {% for holding in holdings %}
                 <tr>
                     <td>
-                        <button class="btn btn-primary btn-100" onclick="openEditModal('{{ holding.id }}',
-                        '{{ holding.ticker }}', '{{ holding.holdingType }}', '{{ holding.holdingSize }}',
-                        '{{ holding.dateEdited }}')">
+<!--                        <button class="btn btn-primary btn-100" onclick="openEditModal('{{ holding.id }}',-->
+<!--                        '{{ holding.ticker }}', '{{ holding.holdingType }}', '{{ holding.holdingSize }}',-->
+<!--                        '{{ holding.dateEdited }}')">-->
+<!--                            Edit-->
+<!--                        </button>-->
+                        <button type="button" class="btn btn-primary btn-100"
+                                data-bs-toggle="modal" data-bs-target="#editModal"
+                                data-id = "{{ holding.id }}"
+                                data-ticker = "{{ holding.ticker }}"
+                                data-holdingsize="{{ holding.holdingSize }}"
+                                data-holdingtype="{{ holding.holdingType }}"
+                                data-dateedited = "{{ holding.dateEdited }}"
+                                data-delete-url="{{ url_for('delete_holdings', holding_id=holding.id) }}">
                             Edit
                         </button>
                     </td>
@@ -87,20 +98,10 @@
                     <td>{{ holding.holdingSize }}</td>
                     <td>{{ holding.dateAdded }}</td>
                     <td>{{ holding.dateEdited }}</td>
-<!--                    <td>-->
-<!--                        <button class="btn btn-primary btn-sm" onclick="openEditModal()"-->
-<!--                                href="/Holdings/delete/{{ holding[0] }}">-->
-<!--                            Delete-->
-<!--                        </button>-->
-<!--                    </td>-->
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-
-<!--        <form action="/Holdings/delete" method="DELETE" class="mb-4">-->
-
-<!--        </form>-->
 
 
     </div>

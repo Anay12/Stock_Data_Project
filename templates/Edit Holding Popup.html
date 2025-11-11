@@ -1,82 +1,107 @@
 <!DOCTYPE html>
 
 <style>
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 10;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.5);
-    }
-    .modal-content {
-        background-color: #fff;
-        margin: 10% auto;
-        padding: 20px;
-        border-radius: 8px;
-        width: 40%;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 24px;
-        cursor: pointer;
-    }
-    .close:hover {
-        color: #000;
-    }
+    /*.modal {*/
+    /*    display: none;*/
+    /*    position: fixed;*/
+    /*    z-index: 10;*/
+    /*    left: 0;*/
+    /*    top: 0;*/
+    /*    width: 100%;*/
+    /*    height: 100%;*/
+    /*    overflow: auto;*/
+    /*    background-color: rgba(0,0,0,0.5);*/
+    /*}*/
+    /*.modal-content {*/
+    /*    background-color: #fff;*/
+    /*    margin: 10% auto;*/
+    /*    padding: 20px;*/
+    /*    border-radius: 8px;*/
+    /*    box-shadow: 0 4px 8px rgba(0,0,0,0.2);*/
+    /*}*/
+    /*.close {*/
+    /*    color: #aaa;*/
+    /*    float: right;*/
+    /*    font-size: 24px;*/
+    /*    cursor: pointer;*/
+    /*}*/
+    /*.close:hover {*/
+    /*    color: #000;*/
+    /*}*/
 </style>
 
 
-<div id="editModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('editModal')">&times;</span>
-        <h3>Edit Holding</h3>
-        <form id="editHoldingForm" method="POST" action="/Holdings/edit">
-            <fieldset form="editHoldingForm">
-                <input type="hidden" id="edit_id" name="id">
-                <label for="edit_ticker">Ticker</label><br>
-                <input class="form-control" type="text" id="edit_ticker" name="ticker" placeholder="Ticker"
-                       required><br>
-                <label for="edit_holding_type">Holding Type</label><br>
-                <input class="form-control" type="text" id="edit_holding_type" name="holding_type"
-                       placeholder="Holding Type"><br>
-                <label for="edit_holding_size">Holding Size</label><br>
-                <input class="form-control" type="number" id="edit_holding_size" name="holding_size" required><br>
-                <input class="form-control" type="hidden" id="edit_date_edited" name="date_edited"
-                       placeholder="Date Edited"><br>
-                <button class="form-control" type="submit">Save Changes</button><br>
-            </fieldset>
-        </form>
+<div id="editModal" class="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Holding</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editHoldingForm" method="POST" action="/Holdings/edit">
+                    <fieldset form="editHoldingForm">
+                        <input type="hidden" id="edit_id" name="id">
+                        <label for="edit_ticker">Ticker</label><br>
+                        <input class="form-control" type="text" id="edit_ticker" name="ticker" placeholder="Ticker"
+                               required><br>
+                        <label for="edit_holding_type">Holding Type</label><br>
+                        <input class="form-control" type="text" id="edit_holding_type" name="holding_type"
+                               placeholder="Holding Type"><br>
+                        <label for="edit_holding_size">Holding Size</label><br>
+                        <input class="form-control" type="number" id="edit_holding_size" name="holding_size" required><br>
+                        <input class="form-control" type="hidden" id="edit_date_edited" name="date_edited"
+                               placeholder="Date Edited"><br>
+                        <button class="form-control" type="submit">Save Changes</button><br>
+                    </fieldset>
+                </form>
 
-        <form id="deleteHolding" method="POST" action="/Holdings/delete/<int:holding_id>">
-            <button class="btn btn-danger" type="submit">Delete Holding</button>
-        </form>
+                <form id="deleteForm" method="POST" style="margin-top: 10px">
+                    <button class="btn btn-danger" type="submit">Delete Holding</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    function openEditModal(id, ticker, holding_type, holding_size, date_edited) {
-        document.getElementById("edit_id").value=id;
-        document.getElementById("edit_ticker").value=ticker;
-        document.getElementById("edit_holding_type").value=holding_type;
-        document.getElementById("edit_holding_size").value=holding_size;
-        document.getElementById("edit_date_edited").value=date_edited;
-        document.getElementById("editModal").style.display="block";
-    }
+    // function openEditModal(id, ticker, holding_type, holding_size, date_edited) {
+    //     document.getElementById("edit_id").value=id;
+    //     document.getElementById("edit_ticker").value=ticker;
+    //     document.getElementById("edit_holding_type").value=holding_type;
+    //     document.getElementById("edit_holding_size").value=holding_size;
+    //     document.getElementById("edit_date_edited").value=date_edited;
+    //     document.getElementById("editModal").style.display="block";
+    // }
 
-    closeModal = function(modal_id) {
-        document.getElementById(modal_id).style.display="none";
-    }
+    // closeModal = function(modal_id) {
+    //     document.getElementById(modal_id).style.display="none";
+    // }
 
-    window.onclick = function(event) {
-        let modal = document.getElementById("editModal");
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
+    // window.onclick = function(event) {
+    //     let modal = document.getElementById("editModal");
+    //     if (event.target == modal) {
+    //         modal.style.display = "none";
+    //     }
+    // }
+
+    const editModalEl = document.getElementById('editModal');
+    editModalEl.addEventListener('show.bs.modal', event => {
+       const button = event.relatedTarget;
+
+       const id = button.getAttribute('data-id');
+       const ticker = button.getAttribute('data-ticker');
+       const holding_size = button.getAttribute('data-holdingsize');
+       const holding_type = button.getAttribute('data-holdingtype');
+       const date_edited = button.getAttribute('data-dateedited');
+
+       document.getElementById("edit_id").value=id;
+       document.getElementById("edit_ticker").value=ticker;
+       document.getElementById("edit_holding_type").value=holding_type;
+       document.getElementById("edit_holding_size").value=holding_size;
+       document.getElementById("edit_date_edited").value=date_edited;
+
+       const deleteForm = document.getElementById('deleteForm');
+        deleteForm.action = button.getAttribute('data-delete-url');
+    });
 </script>
