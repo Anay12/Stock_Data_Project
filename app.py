@@ -1,11 +1,15 @@
-import pandas as pd
 from flask import Flask, render_template, request, redirect, url_for
-from datetime import datetime
 from sqlalchemy import select
+
+import os
+import pandas as pd
+from datetime import datetime
 import plotly.express as px
 import plotly.io as pio
+
 from Database.database import SessionLocal, engine
 from Database.models import Holding
+from Stock import Stock
 
 app = Flask(__name__)
 
@@ -20,7 +24,7 @@ def index():
 @app.route('/Holdings')
 def holdings():
     with SessionLocal() as db:
-        holdings = db.query(Holding).all()
+        holdings_table = db.query(Holding).all()
 
     with engine.connect() as conn:
         query = select(Holding)
@@ -29,7 +33,7 @@ def holdings():
     fig = px.pie(holdings_df, names='ticker', values='holdingSize', hole=0.3)
     holdings_pie = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
 
-    return render_template('holdings.html', holdings=holdings, holdings_pie=holdings_pie)
+    return render_template('holdings.html', holdings=holdings_table, holdings_pie=holdings_pie)
 
 @app.route('/Holdings/add', methods=["POST"])
 def add_holding():
@@ -49,7 +53,7 @@ def add_holding():
 
 @app.route('/Holdings/edit', methods=["POST"])
 def edit_holdings():
-    id = int(request.form["id"])
+    holding_id = int(request.form["id"])
     ticker = request.form["ticker"]
     holding_type = request.form["holding_type"]
     holding_size = request.form["holding_size"]
@@ -57,7 +61,7 @@ def edit_holdings():
 
     with SessionLocal() as db:
         with db.begin():
-            holding = db.query(Holding).get(id)
+            holding = db.query(Holding).get(holding_id)
             if holding:
                 holding.ticker = ticker
                 holding.holdingType = holding_type
@@ -79,8 +83,23 @@ def delete_holdings(holding_id):
 
 @app.route('/Dividends')
 def dividends():
+    dividends_df = pd.DataFrame()
 
-    return render_template('Dividends.html')
+    with engine.connect() as conn:
+        holdings_df = pd.read_sql(select(Holding), conn)
+
+    for ticker in holdings_df['ticker']:
+        stock = Stock(ticker)
+        # dividends_df.join(stock.get_dividends().reset_index())
+
+        pd.concat([dividends_df, stock.get_dividends().reset_index()], axis=1)
+
+    stock = Stock('GOOG')
+    # path = os.getcwd() + f'/data/dividends_{stock.ticker.ticker}.csv'
+    dividends_df = stock.get_dividends().reset_index()
+    dividends_html = dividends_df.to_html(classes="table table-bordered", index=False)
+
+    return render_template('Dividends.html', dividends_html=dividends_html)
 
 
 @app.route('/Performance')
