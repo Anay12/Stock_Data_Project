@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 from datetime import datetime
 from datetime import date
-from dateutil.relativedelta import relativedelta
+from Functions import date_years_ago
 # from Database.models import Holding
 
 class Stock:
@@ -15,17 +15,14 @@ class Stock:
         self.avg_price = 0
         self.ticker = yf.Ticker(self.ticker_str)
 
-    @property
     def last_price(self):
         data = self.ticker.history(period="1d")
         return data["Close"].ilod[-1] if not data.empty else None
 
-    @property
     def market_value(self):
         price = self.last_price
         return None if price is None else price * self.quantity
 
-    @property
     def total_gain(self):
         price = self.last_price
         return None if price is None else (price-self.avg_price) * self.quantity
@@ -41,49 +38,71 @@ class Stock:
     #
     #     )
 
-    # access a single ticker and its data
     def get_info(self):
+        """ access a single ticker and its data """
         return self.ticker.info
 
-    # return past dividends as a Pandas Series
     def get_dividends(self):
+        """ return past dividends as a Pandas Series """
         return self.ticker.dividends
 
-    def output_dividends_to_csv(self):
-        path = os.getcwd() + f'/data/dividends_{self.ticker.ticker}.csv'
-        self.get_dividends().to_csv(path)
-
-    # get financial data (income statement)
     def get_financials(self):
+        """ get financial data (income statement) """
         return self.ticker.financials
 
-    # output financial data for 'ticker' to ticker_financials.csv
+    def prices(self, start_date, end_date):
+        """ return prices from startDate to endDate in DataFrame """
+        return yf.download(self.ticker_str, start_date, end_date)
+
+    def output_dividends_to_csv(self):
+        path = os.getcwd() + f'/data/dividends_{self.ticker_str}.csv'
+        self.get_dividends().to_csv(path)
+
     def output_financials_to_csv(self):
-        path = os.getcwd() + f'/data/{self.ticker.ticker}_financials.csv'
+        """ output financials for 'ticker' to financials_ticker.csv """
+        path = os.getcwd() + f'/data/financials_{self.ticker_str}.csv'
         self.get_financials().to_csv(path)
 
-    # output price information from startDate to endDate to .csv file
-    def prices(self, start_date, end_date):
-        prices_df = yf.download(self.ticker.ticker, start_date, end_date)
-        prices_df.to_csv('_'.join([self.ticker, 'prices.csv']))
+    # def output_prices_to_csv(self):
+    #     path = os.getcwd() + f'/data/prices_{self.ticker_str}.csv'
+    #     self.prices().to_csv(path)
 
+    def output_to_csv(self, func, df):
+        path = os.getcwd() + f'/data/{func}_{self.ticker_str}.csv'
+
+        try:
+            match func:
+                case 'dividends':
+                    df.to_csv(path)
+                case 'financials':
+                    df.to_csv(path)
+                case 'prices':
+                    df.to_csv(path)
+        except FileNotFoundError:
+            print("File not found!")
+
+    def prices_years_ago(self, years):
+        """ 10-year price history """
+        date_10_years_ago = date_years_ago(years)
+        return self.prices(date.today(), date_10_years_ago)
 
 
 class Fund(Stock):
     def __init__(self, ticker):
         super().__init__(ticker)
 
-    # get top holdings for a fund
-    def get_holdings(self):
+    def get_top_holdings(self):
+        """ get top holdings for this fund """
         return self.ticker.funds_data.top_holdings
 
-    def sector_pe_ratio(self, ticker):
+    def sector_pe_ratio(self):
+        """ Compare sector PE ratio to companies' PE ratios """
         ticker = yf.Ticker("XLV") # SPDR health care
-        sector_pe = ticker.info["trailingPE"]
+        sector_pe = self.ticker.info["trailingPE"]
 
         company_pe_ratios = []
 
-        holdings = self.get_holdings()
+        holdings = self.get_top_holdings()
 
         for holding in holdings:
             lookup_holding = yf.Lookup(holding)
@@ -95,18 +114,6 @@ class Fund(Stock):
 
 
 """ Other Methods """
-
-# 10 year price history
-def prices_10_years():
-    stock = Stock('AAPL')
-
-
-def date_years_ago(years_ago: int):
-    """ return date __ years ago """
-    if not isinstance(years_ago, int) or years_ago < 0:
-        raise ValueError("Years must be a positive integer")
-
-    return date.today() - relativedelta(years=years_ago)
 
 
 def filter_by_characteristics():
