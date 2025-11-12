@@ -16,6 +16,11 @@
 <body class="p-4">
     {% include "navbar.html" %}
 
+    <div class="chart-container mt-4 mb-4">
+        <h2 style="text-align: center;">Dividends</h2>
+        {{ dividends_line_chart|safe }}
+    </div>
+
     <div class="container">
         <h2>Dividends</h2>
         {{ dividends_html|safe }}

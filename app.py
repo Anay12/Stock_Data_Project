@@ -83,23 +83,25 @@ def delete_holdings(holding_id):
 
 @app.route('/Dividends')
 def dividends():
-    dividends_df = pd.DataFrame()
-
     with engine.connect() as conn:
         holdings_df = pd.read_sql(select(Holding), conn)
 
+    dividends_df = pd.DataFrame(columns=['Date','Dividends', 'Company'])
+
     for ticker in holdings_df['ticker']:
         stock = Stock(ticker)
-        # dividends_df.join(stock.get_dividends().reset_index())
 
-        pd.concat([dividends_df, stock.get_dividends().reset_index()], axis=1)
+        divs_df = stock.get_dividends().reset_index()
+        divs_df['Company'] = ticker
 
-    stock = Stock('GOOG')
-    # path = os.getcwd() + f'/data/dividends_{stock.ticker.ticker}.csv'
-    dividends_df = stock.get_dividends().reset_index()
-    dividends_html = dividends_df.to_html(classes="table table-bordered", index=False)
+        dividends_df = pd.concat([dividends_df, divs_df])
 
-    return render_template('Dividends.html', dividends_html=dividends_html)
+    fig = px.line(data_frame=dividends_df, x='Date', y='Dividends', color='Company', markers=True)
+    dividends_line_chart = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
+
+    dividends_table_html = dividends_df.to_html(classes="table table-bordered", index=False)
+
+    return render_template('Dividends.html', dividends_html=dividends_table_html, dividends_line_chart=dividends_line_chart)
 
 
 @app.route('/Performance')
