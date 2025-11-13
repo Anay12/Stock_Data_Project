@@ -86,6 +86,14 @@ class Stock:
         date_10_years_ago = date_years_ago(years)
         return self.prices(date.today(), date_10_years_ago)
 
+    def is_fund(self):
+        try:
+            holding_type = self.get_info().get('quoteType', 'Unknown')    # 'EQUITY', 'ETF', 'MUTUALFUND', 'Index'
+        except Exception as e:
+            return f"Could not retrieve fund type for {stock.ticker_str}. Error: {e}"
+
+        return holding_type
+
 
 class Fund(Stock):
     def __init__(self, ticker):
