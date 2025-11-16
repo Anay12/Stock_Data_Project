@@ -5,7 +5,6 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 
-
 def date_years_ago(years_ago: int):
     """ return date __ years ago """
     if not isinstance(years_ago, int) or years_ago < 0:
@@ -23,4 +22,6 @@ def plot_dividends(div_df: pd.DataFrame):
     """ forecast future dividends (and maybe when dividends will increase based on revenue/income/stock price) """
     fig = px.line(data_frame=div_df, x='Date', y='Dividends', color='Company', markers=True)
     fig.show()
+
+
 

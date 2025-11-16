@@ -54,14 +54,14 @@ class Stock:
         """ return prices from startDate to endDate in DataFrame """
         return yf.download(self.ticker_str, start_date, end_date)
 
-    def output_dividends_to_csv(self):
-        path = os.getcwd() + f'/data/dividends_{self.ticker_str}.csv'
-        self.get_dividends().to_csv(path)
-
-    def output_financials_to_csv(self):
-        """ output financials for 'ticker' to financials_ticker.csv """
-        path = os.getcwd() + f'/data/financials_{self.ticker_str}.csv'
-        self.get_financials().to_csv(path)
+    # def output_dividends_to_csv(self):
+    #     path = os.getcwd() + f'/data/dividends_{self.ticker_str}.csv'
+    #     self.get_dividends().to_csv(path)
+    #
+    # def output_financials_to_csv(self):
+    #     """ output financials for 'ticker' to financials_ticker.csv """
+    #     path = os.getcwd() + f'/data/financials_{self.ticker_str}.csv'
+    #     self.get_financials().to_csv(path)
 
     # def output_prices_to_csv(self):
     #     path = os.getcwd() + f'/data/prices_{self.ticker_str}.csv'
