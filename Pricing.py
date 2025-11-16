@@ -1,11 +1,12 @@
 import pandas_datareader as pdr
 import matplotlib.pyplot as plt
 from Stock import Stock
-
-appl = Stock('APPL')
-appl.prices()
+import yfinance as yf
 
 # plt.axline()
+
+appl_df = yf.download("AAPL", period="10y", interval="1d")
+appl_df
 
 
 

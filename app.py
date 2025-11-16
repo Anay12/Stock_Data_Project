@@ -103,7 +103,8 @@ def delete_holdings(holding_id):
 @cache.cached()
 def dividends():
     with engine.connect() as conn:
-        holdings_df = pd.read_sql(select(Holding), conn)
+        query = select(Holding)
+        holdings_df = pd.read_sql(query, conn)
 
     dividends_list = []
 
@@ -127,7 +128,7 @@ def dividends():
     if dividends_list:
         dividends_df = pd.concat(dividends_list, ignore_index=True)
     else:
-        dividends_df = pd.DataFrame(columns=['Date','Dividends', 'Company'])
+        dividends_df = pd.DataFrame(columns=['Date', 'Dividends', 'Company'])
 
     fig = px.line(data_frame=dividends_df, x='Date', y='Dividends', color='Company', markers=True)
     dividends_line_chart = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
