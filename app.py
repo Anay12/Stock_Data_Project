@@ -1,9 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flask_caching import Cache
 from sqlalchemy import select
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import os
-import pandas as pd
+import time
 from datetime import datetime
+
+import pandas as pd
 import plotly.express as px
 import plotly.io as pio
 
@@ -13,15 +17,29 @@ from Stock import Stock
 
 app = Flask(__name__)
 
+app.config.from_mapping({
+    'CACHE_TYPE': "SimpleCache",
+    'CACHE_DEFAULT_TIMEOUT': 300
+})
+
+cache = Cache(app)
+
 @app.context_processor
 def inject_active_page():
     return {"active_page": request.endpoint}
 
 @app.route('/')
+@cache.cached()
 def index():
+    # News panel
+
+    # Portfolio breakdown by type
+    # classification ['Aggressive growth', 'Growth', 'Balanced', 'Conservative', 'Very conservative']
+
     return render_template('index.html')
 
 @app.route('/Holdings')
+@cache.cached()
 def holdings():
     with SessionLocal() as db:
         holdings_table = db.query(Holding).all()
@@ -82,19 +100,34 @@ def delete_holdings(holding_id):
     return redirect(url_for('holdings'))
 
 @app.route('/Dividends')
+@cache.cached()
 def dividends():
     with engine.connect() as conn:
         holdings_df = pd.read_sql(select(Holding), conn)
 
-    dividends_df = pd.DataFrame(columns=['Date','Dividends', 'Company'])
+    dividends_list = []
 
-    for ticker in holdings_df['ticker']:
+    def fetch_dividends(ticker):
         stock = Stock(ticker)
-
         divs_df = stock.get_dividends().reset_index()
         divs_df['Company'] = ticker
+        return divs_df
 
-        dividends_df = pd.concat([dividends_df, divs_df])
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        future_to_ticker = {executor.submit(fetch_dividends, ticker): ticker for ticker in holdings_df['ticker'].unique()}
+
+        for future in as_completed(future_to_ticker):
+            try:
+                divs_df = future.result()
+                dividends_list.append(divs_df)
+            except Exception as e:
+                ticker = future_to_ticker[future]
+                print(f"Error fetching dividends for {ticker}: {e}")
+
+    if dividends_list:
+        dividends_df = pd.concat(dividends_list, ignore_index=True)
+    else:
+        dividends_df = pd.DataFrame(columns=['Date','Dividends', 'Company'])
 
     fig = px.line(data_frame=dividends_df, x='Date', y='Dividends', color='Company', markers=True)
     dividends_line_chart = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
@@ -105,6 +138,7 @@ def dividends():
 
 
 @app.route('/Performance')
+@cache.cached()
 def performance():
 
     return render_template('Performance.html')
