@@ -8,10 +8,12 @@ class Holding(Base): # all owned holdings (each transaction)
 
     id = Column(Integer, primary_key=True, index=True)
     ticker = Column(String, nullable=False)
-    holdingType = Column(String, nullable=True)
-    holdingSize = Column(Float, nullable=False)
-    dateAdded = Column(Date, nullable=True)
-    dateEdited = Column(Date, nullable=True)
+    holding_type = Column(String, nullable=True)
+    holding_size = Column(Float, nullable=False)
+    date_added = Column(Date, nullable=True)
+    date_edited = Column(Date, nullable=True)
+
+    # ticker_rel = relationship("Ticker", back_populates="holdings")
 
     def __repr__(self):
         return (f"<Holdings(id='{self.id}', Ticker='{self.ticker}', Holding Type='{self.holdingType}', Holding Size="
