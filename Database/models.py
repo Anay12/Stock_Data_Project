@@ -3,7 +3,7 @@ from Database.database import Base
 
 # from Stock import Stock
 
-class Holding(Base):
+class Holding(Base): # all owned holdings (each transaction)
     __tablename__ = "holdings"
 
     id = Column(Integer, primary_key=True, index=True)
