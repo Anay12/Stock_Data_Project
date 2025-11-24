@@ -16,8 +16,8 @@ class Holding(Base): # all owned holdings (each transaction)
     # ticker_rel = relationship("Ticker", back_populates="holdings")
 
     def __repr__(self):
-        return (f"<Holdings(id='{self.id}', Ticker='{self.ticker}', Holding Type='{self.holdingType}', Holding Size="
-                f"'{self.holdingSize}', Date Added='{self.dateAdded}', Date Edited='{self.dateEdited}')>")
+        return (f"<Holdings(id='{self.id}', Ticker='{self.ticker}', Holding Type='{self.holding_type}', Holding Size="
+                f"'{self.holding_size}', Date Added='{self.date_added}', Date Edited='{self.date_edited}')>")
 
     # def to_stock(self):
     #     return Stock(ticker=self.ticker, holding_type=self.holdingType, quantity=self.holdingSize)
