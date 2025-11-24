@@ -48,7 +48,7 @@ def holdings():
         query = select(Holding)
         holdings_df = pd.read_sql(query, conn)
 
-    fig = px.pie(holdings_df, names='ticker', values='holdingSize', hole=0.3)
+    fig = px.pie(holdings_df, names='ticker', values='holding_size', hole=0.3)
     holdings_pie = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
 
     return render_template('holdings.html', holdings=holdings_table, holdings_pie=holdings_pie)
