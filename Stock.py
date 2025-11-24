@@ -8,8 +8,8 @@ from Functions import date_years_ago
 # from Database.models import Holding
 
 class Stock:
-    def __init__(self, ticker, quantity=0, holding_type=''):
-        self.ticker_str = ticker.upper()
+    def __init__(self, ticker_str, quantity=0, holding_type=''):
+        self.ticker_str = ticker_str.upper()
         self.quantity = quantity
         self.holding_type = holding_type
         self.avg_price = 0
