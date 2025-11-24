@@ -82,9 +82,9 @@ def edit_holdings():
             holding = db.query(Holding).get(holding_id)
             if holding:
                 holding.ticker = ticker
-                holding.holdingType = holding_type
-                holding.holdingSize = holding_size
-                holding.dateEdited = date_edited
+                holding.holding_type = holding_type
+                holding.holding_size = holding_size
+                holding.date_edited = date_edited
 
     return redirect(url_for('holdings'))
 
