@@ -1,4 +1,4 @@
-from Database.database import Base, engine
+from database import Base, engine
 
 """ Creates all tables defined in models.py """
 
