@@ -12,6 +12,8 @@ def date_years_ago(years_ago: int):
 
     return date.today() - relativedelta(years=years_ago)
 
+def yesterday_date():
+    return date.today() - relativedelta(days=1)
 
 def compute_compound_interest(principal: float, div_yield: float, period, time):
     """ compound interest computation """
