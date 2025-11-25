@@ -8,7 +8,9 @@ import time
 from datetime import datetime
 
 import pandas as pd
+import matplotlib.pyplot as plt
 import plotly.express as px
+import plotly.graph_objects as go
 import plotly.io as pio
 
 from Database.database import SessionLocal, engine
@@ -139,7 +141,6 @@ def dividends():
 
     return render_template('Dividends.html', dividends_html=dividends_table_html, dividends_line_chart=dividends_line_chart)
 
-
 @app.route('/Performance')
 @cache.cached()
 def performance():
@@ -152,8 +153,6 @@ def prices():
     with engine.connect() as conn:
         holdings_df = pd.read_sql(select(Holding), conn)
 
-    prices_list = []
-
     def fetch_prices(ticker):
         stock = Stock(ticker)
         stock_price_df = stock.prices_years_ago(1).reset_index()
@@ -161,20 +160,37 @@ def prices():
         stock_price_df.columns=['Date', 'Close', 'High', 'Low', 'Open', 'Volume', 'Company']
         return stock_price_df
 
-    with ThreadPoolExecutor(max_workers=4) as executor:
-        future_to_ticker = {executor.submit(fetch_prices, ticker): ticker for ticker in holdings_df['ticker'].unique()}
+    prices_list = []
+    tickers = holdings_df['ticker'].unique()
 
-        for future in as_completed(future_to_ticker):
-            try:
-                price_df = future.result()
-                prices_list.append(price_df)
-            except Exception as e:
-                ticker = future_to_ticker[future]
-                print(f"Error fetching prices for {ticker}: {e}")
+    for ticker in tickers:
+        try:
+            prices_list.append(fetch_prices(ticker))
+        except Exception as e:
+            print(f"Error fetching prices for {ticker}: {e}")
 
-    prices_df = pd.concat(prices_list, ignore_index=True) if prices_list else pd.DataFrame()
+    # with ThreadPoolExecutor(max_workers=4) as executor:
+    #     future_to_ticker = {executor.submit(fetch_prices, ticker): ticker for ticker in holdings_df['ticker'].unique()}
+    #
+    #     for future in as_completed(future_to_ticker):
+    #         try:
+    #             price_df = future.result()
+    #             prices_list.append(price_df)
+    #         except Exception as e:
+    #             ticker = future_to_ticker[future]
+    #             print(f"Error fetching prices for {ticker}: {e}")
+
+    if prices_list:
+        prices_df = pd.concat(prices_list, ignore_index=True)
+    else:
+        prices_df = pd.DataFrame(columns=('Date', 'Close', 'High', 'Low', 'Open', 'Volume', 'Company'))
+
+    # prices_df['Date'] = pd.to_datetime(prices_df['Date'])
+    # pivot_prices_df = prices_df.pivot(index='Date', columns='Company', values='Close')
 
     fig = px.line(data_frame=prices_df, x='Date', y='Close', color='Company', markers=True)
+    # fig.update_layout(template="plotly_white", hovermode="x unified")
+
     prices_line_chart = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
 
     prices_table_html = prices_df.to_html(classes="table table-bordered", index=False)
