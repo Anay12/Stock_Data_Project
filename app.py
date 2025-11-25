@@ -55,7 +55,7 @@ def holdings():
 
 @app.route('/Holdings/add', methods=["POST"])
 def add_holding():
-    ticker = request.form["ticker"]
+    ticker = request.form["ticker"].strip().upper()
     holding_type = request.form["holding_type"]
     holding_size = request.form["holding_size"]
     # date_added = request.form["date_added"]
