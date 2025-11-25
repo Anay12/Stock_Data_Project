@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 import os
 from datetime import datetime
 from datetime import date
-from Functions import date_years_ago
+from Functions import date_years_ago, yesterday_date
+
+
 # from Database.models import Holding
 
 class Stock:
@@ -85,14 +87,16 @@ class Stock:
         """ get price history for 1, 5, 10, ... years """
         return self.prices(date_years_ago(years), date.today())
 
-    def is_fund(self):
+    def get_holding_type(self):
         try:
             holding_type = self.get_info().get('quoteType', 'Unknown')    # 'EQUITY', 'ETF', 'MUTUALFUND', 'Index'
         except Exception as e:
-            return f"Could not retrieve fund type for {stock.ticker_str}. Error: {e}"
+            return f"Could not retrieve holding type for {stock.ticker_str}. Error: {e}"
 
         return holding_type
 
+    def is_fund(self):
+        return self.get_holding_type() != 'EQUITY'
 
 class Fund(Stock):
     def __init__(self, ticker):
