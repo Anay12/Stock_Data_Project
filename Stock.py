@@ -82,9 +82,8 @@ class Stock:
             print("File not found!")
 
     def prices_years_ago(self, years):
-        """ 10-year price history """
-        date_10_years_ago = date_years_ago(years)
-        return self.prices(date.today(), date_10_years_ago)
+        """ get price history for 1, 5, 10, ... years """
+        return self.prices(date_years_ago(years), yesterday_date())
 
     def is_fund(self):
         try:
