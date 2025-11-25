@@ -83,7 +83,7 @@ class Stock:
 
     def prices_years_ago(self, years):
         """ get price history for 1, 5, 10, ... years """
-        return self.prices(date_years_ago(years), yesterday_date())
+        return self.prices(date_years_ago(years), date.today())
 
     def is_fund(self):
         try:
