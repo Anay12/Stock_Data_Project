@@ -64,7 +64,10 @@ def add_holding():
 
     with SessionLocal() as db:
         with db.begin():
-            new_holding = Holding(ticker=ticker, holdingType=holding_type, holdingSize=holding_size, dateAdded=date_added)
+            # ticker_id = db.query(Ticker).get(ticker)
+            new_holding = Holding(ticker=ticker, holding_type=holding_type, holding_size=holding_size,
+                                  date_added=date_added)
+            # new_ticker = Ticker(ticker=ticker)
             db.add(new_holding)
 
     return redirect(url_for('holdings'))
