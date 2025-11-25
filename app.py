@@ -103,7 +103,7 @@ def delete_holdings(holding_id):
     return redirect(url_for('holdings'))
 
 @app.route('/Dividends')
-@cache.cached()
+@cache.cached(timeout=300)
 def dividends():
     with engine.connect() as conn:
         holdings_df = pd.read_sql(select(Holding), conn)
