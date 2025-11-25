@@ -177,7 +177,7 @@ def prices():
     else:
         prices_df = pd.DataFrame()
 
-    fig = px.line(data_frame=prices_df, x="('Date', '')", y='Dividends', color='Company', markers=True)
+    fig = px.line(data_frame=prices_df, x='Date', y='Close', color='Company', markers=True)
     prices_line_chart = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
 
     prices_table_html = prices_df.to_html(classes="table table-bordered", index=False)
