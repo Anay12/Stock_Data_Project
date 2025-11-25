@@ -156,9 +156,10 @@ def prices():
 
     def fetch_prices(ticker):
         stock = Stock(ticker)
-        price_df = stock.prices_years_ago(1).reset_index()
-        price_df['Company'] = ticker
-        return price_df
+        stock_price_df = stock.prices_years_ago(1).reset_index()
+        stock_price_df['Company'] = ticker
+        stock_price_df.columns=['Date', 'Close', 'High', 'Low', 'Open', 'Volume', 'Company']
+        return stock_price_df
 
     with ThreadPoolExecutor(max_workers=4) as executor:
         future_to_ticker = {executor.submit(fetch_prices, ticker): ticker for ticker in holdings_df['ticker'].unique()}
