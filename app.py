@@ -106,8 +106,7 @@ def delete_holdings(holding_id):
 @cache.cached()
 def dividends():
     with engine.connect() as conn:
-        query = select(Holding)
-        holdings_df = pd.read_sql(query, conn)
+        holdings_df = pd.read_sql(select(Holding), conn)
 
     dividends_list = []
 
@@ -172,10 +171,7 @@ def prices():
                 ticker = future_to_ticker[future]
                 print(f"Error fetching prices for {ticker}: {e}")
 
-    if prices_list:
-        prices_df = pd.concat(prices_list, ignore_index=True)
-    else:
-        prices_df = pd.DataFrame()
+    prices_df = pd.concat(prices_list, ignore_index=True) if prices_list else pd.DataFrame()
 
     fig = px.line(data_frame=prices_df, x='Date', y='Close', color='Company', markers=True)
     prices_line_chart = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
