@@ -147,6 +147,43 @@ def performance():
 
     return render_template('Performance.html')
 
+@app.route('/Prices')
+# @cache.cached()
+def prices():
+    with engine.connect() as conn:
+        holdings_df = pd.read_sql(select(Holding), conn)
+
+    prices_list = []
+
+    def fetch_prices(ticker):
+        stock = Stock(ticker)
+        price_df = stock.prices_years_ago(1).reset_index()
+        price_df['Company'] = ticker
+        return price_df
+
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        future_to_ticker = {executor.submit(fetch_prices, ticker): ticker for ticker in holdings_df['ticker'].unique()}
+
+        for future in as_completed(future_to_ticker):
+            try:
+                price_df = future.result()
+                prices_list.append(price_df)
+            except Exception as e:
+                ticker = future_to_ticker[future]
+                print(f"Error fetching prices for {ticker}: {e}")
+
+    if prices_list:
+        prices_df = pd.concat(prices_list, ignore_index=True)
+    else:
+        prices_df = pd.DataFrame()
+
+    fig = px.line(data_frame=prices_df, x="('Date', '')", y='Dividends', color='Company', markers=True)
+    prices_line_chart = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
+
+    prices_table_html = prices_df.to_html(classes="table table-bordered", index=False)
+
+    return render_template('Prices.html', prices_table_html=prices_table_html,
+                           prices_line_chart=prices_line_chart)
 
 
 if __name__ == "__main__":
