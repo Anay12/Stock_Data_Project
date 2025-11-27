@@ -5,15 +5,40 @@ import yfinance as yf
 from sqlalchemy import select
 from Database.database import engine
 from Database.models import Holding
-from Stock import Stock
+from stock import Stock
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# plt.axline()
 
-appl_df = yf.download("AAPL", period="10y", interval="1d")
-appl_df
+def retrieve_dividends():
+    with engine.connect() as conn:
+        holdings_df = pd.read_sql(select(Holding), conn)
 
-def get_dividends_for_today():
-    pass
+    dividends_list = []
+
+    def fetch_dividends(ticker):
+        stock = Stock(ticker)
+        divs_df = stock.dividends.reset_index()
+        divs_df['Company'] = ticker
+        return divs_df
+
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        future_to_ticker = {executor.submit(fetch_dividends, ticker): ticker for ticker in holdings_df['ticker'].unique()}
+
+        for future in as_completed(future_to_ticker):
+            try:
+                divs_df = future.result()
+                dividends_list.append(divs_df)
+            except Exception as e:
+                ticker = future_to_ticker[future]
+                print(f"Error fetching dividends for {ticker}: {e}")
+
+    if dividends_list:
+        dividends_df = pd.concat(dividends_list, ignore_index=True)
+    else:
+        dividends_df = pd.DataFrame(columns=['Date', 'Dividends', 'Company'])
+
+    return dividends_df
+
 
 def prices_OHLC():
     with engine.connect() as conn:

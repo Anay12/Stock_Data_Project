@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 from datetime import datetime
 from datetime import date
-from Functions import date_years_ago, yesterday_date
+from functions import date_years_ago, yesterday_date
 # from Database.models import Holding
 
 

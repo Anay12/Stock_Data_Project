@@ -15,7 +15,8 @@ import plotly.io as pio
 
 from Database.database import SessionLocal, engine
 from Database.models import Holding
-from Stock import Stock
+from stock import Stock
+from data_retrieval import retrieve_dividends, prices_OHLC
 
 app = Flask(__name__)
 
@@ -107,32 +108,7 @@ def delete_holdings(holding_id):
 @app.route('/Dividends')
 @cache.cached(timeout=300)
 def dividends():
-    with engine.connect() as conn:
-        holdings_df = pd.read_sql(select(Holding), conn)
-
-    dividends_list = []
-
-    def fetch_dividends(ticker):
-        stock = Stock(ticker)
-        divs_df = stock.get_dividends().reset_index()
-        divs_df['Company'] = ticker
-        return divs_df
-
-    with ThreadPoolExecutor(max_workers=4) as executor:
-        future_to_ticker = {executor.submit(fetch_dividends, ticker): ticker for ticker in holdings_df['ticker'].unique()}
-
-        for future in as_completed(future_to_ticker):
-            try:
-                divs_df = future.result()
-                dividends_list.append(divs_df)
-            except Exception as e:
-                ticker = future_to_ticker[future]
-                print(f"Error fetching dividends for {ticker}: {e}")
-
-    if dividends_list:
-        dividends_df = pd.concat(dividends_list, ignore_index=True)
-    else:
-        dividends_df = pd.DataFrame(columns=['Date', 'Dividends', 'Company'])
+    dividends_df = retrieve_dividends()
 
     fig = px.line(data_frame=dividends_df, x='Date', y='Dividends', color='Company', markers=True)
     dividends_line_chart = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
@@ -150,43 +126,7 @@ def performance():
 @app.route('/Prices')
 # @cache.cached()
 def prices():
-    with engine.connect() as conn:
-        holdings_df = pd.read_sql(select(Holding), conn)
-
-    def fetch_prices(ticker):
-        stock = Stock(ticker)
-        stock_price_df = stock.prices_years_ago(1).reset_index()
-        stock_price_df['Company'] = ticker
-        stock_price_df.columns=['Date', 'Close', 'High', 'Low', 'Open', 'Volume', 'Company']
-        return stock_price_df
-
-    prices_list = []
-    tickers = holdings_df['ticker'].unique()
-
-    for ticker in tickers:
-        try:
-            prices_list.append(fetch_prices(ticker))
-        except Exception as e:
-            print(f"Error fetching prices for {ticker}: {e}")
-
-    # with ThreadPoolExecutor(max_workers=4) as executor:
-    #     future_to_ticker = {executor.submit(fetch_prices, ticker): ticker for ticker in holdings_df['ticker'].unique()}
-    #
-    #     for future in as_completed(future_to_ticker):
-    #         try:
-    #             price_df = future.result()
-    #             prices_list.append(price_df)
-    #         except Exception as e:
-    #             ticker = future_to_ticker[future]
-    #             print(f"Error fetching prices for {ticker}: {e}")
-
-    if prices_list:
-        prices_df = pd.concat(prices_list, ignore_index=True)
-    else:
-        prices_df = pd.DataFrame(columns=('Date', 'Close', 'High', 'Low', 'Open', 'Volume', 'Company'))
-
-    # prices_df['Date'] = pd.to_datetime(prices_df['Date'])
-    # pivot_prices_df = prices_df.pivot(index='Date', columns='Company', values='Close')
+    prices_df = prices_OHLC()
 
     fig = px.line(data_frame=prices_df, x='Date', y='Close', color='Company', markers=True)
     # fig.update_layout(template="plotly_white", hovermode="x unified")
