@@ -9,10 +9,13 @@ from stock import Stock
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
-def retrieve_dividends():
+def get_holdings_df():
     with engine.connect() as conn:
         holdings_df = pd.read_sql(select(Holding), conn)
+    return holdings_df
 
+def retrieve_dividends():
+    holdings_df = get_holdings_df()
     dividends_list = []
 
     def fetch_dividends(ticker):
@@ -41,8 +44,7 @@ def retrieve_dividends():
 
 
 def prices_OHLC():
-    with engine.connect() as conn:
-        holdings_df = pd.read_sql(select(Holding), conn)
+    holdings_df = get_holdings_df()
 
     def fetch_prices(ticker):
         stock = Stock(ticker)
