@@ -57,7 +57,7 @@ def holdings():
     fig = px.pie(holdings_df, names='ticker_name', values='holding_size', hole=0.3)
     holdings_pie = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
 
-    return render_template('holdings.html', holdings=holdings_table, holdings_pie=holdings_pie)
+    return render_template('Holdings.html', holdings=holdings_table, holdings_pie=holdings_pie)
 
 @app.route('/Holdings/add', methods=["POST"])
 def add_holding():
