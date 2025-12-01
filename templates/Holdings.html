@@ -78,9 +78,9 @@
                     <td>
                         <button type="button" class="btn btn-primary btn-100"
                                 data-bs-toggle="modal" data-bs-target="#editModal"
-                                data-id = "{{ holding.id }}"
-                                data-ticker = "{{ holding.ticker }}"
-                                data-holdingtype="{{ holding.holding_type }}"
+                                data-id = "{{ holding.holding_id }}"
+                                data-ticker = "{{ holding.ticker.ticker_name }}"
+                                data-holdingtype="{{ holding.ticker.holding_type }}"
                                 data-holdingsize="{{ holding.holding_size }}"
                                 data-dateedited = "{{ holding.date_edited }}"
                                 data-delete-url="{{ url_for('delete_holdings', holding_id=holding.id) }}">
