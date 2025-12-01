@@ -48,7 +48,10 @@ def holdings():
         holdings_table = db.query(Holding).options(joinedload(Holding.ticker)).all()
 
     with engine.connect() as conn:
-        query = select(Holding)
+        query = select(Holding.holding_id,
+                       Holding.holding_size,
+                       Ticker.ticker_name).join(
+            Ticker, Ticker.ticker_id == Holding.ticker_id)
         holdings_df = pd.read_sql(query, conn)
 
     fig = px.pie(holdings_df, names='ticker', values='holding_size', hole=0.3)
