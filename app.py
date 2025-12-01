@@ -45,7 +45,7 @@ def index():
 @cache.cached()
 def holdings():
     with SessionLocal() as db:
-        holdings_table = db.query(Holding).all()
+        holdings_table = db.query(Holding).options(joinedload(Holding.ticker)).all()
 
     with engine.connect() as conn:
         query = select(Holding)
