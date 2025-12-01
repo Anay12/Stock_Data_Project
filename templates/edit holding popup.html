@@ -89,8 +89,8 @@
     editModalEl.addEventListener('show.bs.modal', event => {
        const button = event.relatedTarget;
 
-       const id = button.getAttribute('data-id');
-       const ticker = button.getAttribute('data-ticker');
+       const holding_id = button.getAttribute('data-id');
+       const ticker_name = button.getAttribute('data-ticker');
        const holding_size = button.getAttribute('data-holdingsize');
        const holding_type = button.getAttribute('data-holdingtype');
        const date_edited = button.getAttribute('data-dateedited');
