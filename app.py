@@ -59,6 +59,19 @@ def holdings():
 
     return render_template('Holdings.html', holdings=holdings_table, holdings_pie=holdings_pie)
 
+@app.route('/Holdings/refresh-prices', methods=["POST"])
+def refresh_prices():
+    with SessionLocal() as db:
+        with db.begin():
+            tickers_table = db.query(Ticker).all()
+
+            for ticker in tickers_table:
+                stock = Stock(ticker.ticker_name)
+                current_price = stock.fetch_price()
+                ticker.price = current_price
+
+    return redirect(url_for('holdings'))
+
 @app.route('/Holdings/add', methods=["POST"])
 def add_holding():
     ticker_name = request.form["ticker_name"].strip().upper()
