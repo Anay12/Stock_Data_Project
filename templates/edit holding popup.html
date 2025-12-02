@@ -93,6 +93,7 @@
     editModalEl.addEventListener('show.bs.modal', event => {
        const button = event.relatedTarget;
 
+       // get values passed from button
        const holding_id = button.getAttribute('data-id');
        const ticker_name = button.getAttribute('data-ticker_name');
        const holding_size = button.getAttribute('data-holding_size');
@@ -100,12 +101,12 @@
        const date_edited = button.getAttribute('data-date_edited');
 
        document.getElementById("edit_holding_id").value=holding_id;
-       document.getElementById("edit_ticker").value=ticker_name;
+       document.getElementById("edit_ticker_name").value=ticker_name;
        document.getElementById("edit_holding_type").value=holding_type;
        document.getElementById("edit_holding_size").value=holding_size;
        document.getElementById("edit_date_edited").value=date_edited;
 
-       const deleteForm = document.getElementById('deleteForm');
-        deleteForm.action = button.getAttribute('data-delete-url');
+       const delete_form = document.getElementById('delete_form');
+       delete_form.action = button.getAttribute('data-delete-url');
     });
 </script>
