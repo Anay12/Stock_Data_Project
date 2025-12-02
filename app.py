@@ -106,12 +106,17 @@ def edit_holdings():
 
     with SessionLocal() as db:
         with db.begin():
-            holding = db.query(Holding).get(holding_id)
-            if holding:
-                holding.ticker = ticker
-                holding.holding_type = holding_type
-                holding.holding_size = holding_size
-                holding.date_edited = date_edited
+            holding = db.get(Holding, holding_id)
+            # db.query(Holding).get(holding_id)
+
+            try:
+                if holding:
+                    holding.ticker.ticker_name = ticker_name
+                    holding.ticker.holding_type = holding_type
+                    holding.holding_size = holding_size
+                    holding.date_edited = date_edited
+            except Exception as e:
+                print(f"Could not add holding: {e}")
 
     return redirect(url_for('holdings'))
 
