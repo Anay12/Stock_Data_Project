@@ -13,6 +13,7 @@ class Holding(Base): # all owned holdings (each transaction)
     account_name = Column(String, ForeignKey("accounts.account_name"))
     date_added = Column(Date, nullable=True)
     date_edited = Column(Date, nullable=True)
+    account_name = Column(String, ForeignKey("accounts.account_name"))
 
     ticker = relationship("Ticker", back_populates="holdings")
     account = relationship("Account", back_populates="holdings")
