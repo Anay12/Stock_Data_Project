@@ -27,11 +27,11 @@ class Stock(yf.Ticker):
         return self.info.get("regularMarketPrice")
 
     def market_value(self):
-        price = self.info.get("regularMarketPrice")
+        price = self.fetch_price()
         return price * self.quantity
 
     def total_gain(self):
-        price = self.info.get("regularMarketPrice")
+        price = self.fetch_price()
         return (price-self.avg_price) * self.quantity
 
     def dividend_yield(self):
