@@ -98,8 +98,8 @@ def add_holding():
 
 @app.route('/Holdings/edit', methods=["POST"])
 def edit_holdings():
-    holding_id = int(request.form["id"])
-    ticker = request.form["ticker"]
+    holding_id = int(request.form["holding_id"])
+    ticker_name = request.form["ticker_name"]
     holding_type = request.form["holding_type"]
     holding_size = request.form["holding_size"]
     date_edited = datetime.now()
