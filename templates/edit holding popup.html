@@ -100,6 +100,7 @@
        const holding_type = button.getAttribute('data-holding_type');
        const date_edited = button.getAttribute('data-date_edited');
 
+       // auto-fill values from button into document form fields
        document.getElementById("edit_holding_id").value=holding_id;
        document.getElementById("edit_ticker_name").value=ticker_name;
        document.getElementById("edit_holding_type").value=holding_type;
