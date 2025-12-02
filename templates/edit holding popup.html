@@ -42,8 +42,8 @@
                 <form id="editHoldingForm" method="POST" action="/Holdings/edit">
                     <fieldset form="editHoldingForm">
                         <input type="hidden" id="edit_holding_id" name="holding_id">
-                        <label for="edit_ticker">Ticker</label><br>
-                        <input class="form-control" type="text" id="edit_ticker" name="ticker_name"
+                        <label for="edit_ticker_name">Ticker</label><br>
+                        <input class="form-control" type="text" id="edit_ticker_name" name="ticker_name"
                                placeholder="Ticker" required><br>
                         <label for="edit_holding_type">Holding Type</label><br>
                         <input class="form-control" type="text" id="edit_holding_type" name="holding_type"
@@ -56,7 +56,7 @@
                     </fieldset>
                 </form>
 
-                <form id="deleteForm" method="POST"
+                <form id="delete_form" method="POST"
                       action="{{ url_for('delete_holdings', holding_id=0) }}"
                       style="display: inline;">
                     <button class="btn btn-sm btn-danger" type="submit"
@@ -71,7 +71,7 @@
 <script>
     // function openEditModal(id, ticker, holding_type, holding_size, date_edited) {
     //     document.getElementById("edit_id").value=id;
-    //     document.getElementById("edit_ticker").value=ticker;
+    //     document.getElementById("edit_ticker_name").value=ticker;
     //     document.getElementById("edit_holding_type").value=holding_type;
     //     document.getElementById("edit_holding_size").value=holding_size;
     //     document.getElementById("edit_date_edited").value=date_edited;
@@ -94,10 +94,10 @@
        const button = event.relatedTarget;
 
        const holding_id = button.getAttribute('data-id');
-       const ticker_name = button.getAttribute('data-ticker');
-       const holding_size = button.getAttribute('data-holdingsize');
-       const holding_type = button.getAttribute('data-holdingtype');
-       const date_edited = button.getAttribute('data-dateedited');
+       const ticker_name = button.getAttribute('data-ticker_name');
+       const holding_size = button.getAttribute('data-holding_size');
+       const holding_type = button.getAttribute('data-holding_type');
+       const date_edited = button.getAttribute('data-date_edited');
 
        document.getElementById("edit_holding_id").value=holding_id;
        document.getElementById("edit_ticker").value=ticker_name;
