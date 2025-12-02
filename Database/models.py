@@ -23,8 +23,8 @@ class Holding(Base): # all owned holdings (each transaction)
 
     def __repr__(self):
         return (f"<Holdings(id='{self.holding_id}', Ticker='{self.ticker.ticker_name}', Holding Type="
-                f"'{self.ticker.type}', "f"Holding Size='{self.holding_size}', Date Added='{self.date_added}', Date "
-                f"Edited='{self.date_edited}')>")
+                f"'{self.ticker.holding_type}', "f"Holding Size='{self.holding_size}', Date Added='{self.date_added}', "
+                f"Date Edited='{self.date_edited}')>")
 
 
 class Ticker(Base):
