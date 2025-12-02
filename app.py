@@ -70,10 +70,28 @@ def add_holding():
 
     with SessionLocal() as db:
         with db.begin():
-            # ticker_id = db.query(Ticker).get(ticker)
-            new_holding = Holding(ticker=ticker, holding_type=holding_type, holding_size=holding_size,
-                                  date_added=date_added)
-            # new_ticker = Ticker(ticker=ticker)
+            # validate ticker name
+            if Stock(ticker_name).is_valid_ticker():
+                ticker = db.query(Ticker).filter(Ticker.ticker_name == ticker_name).first()
+
+                # add new tickers to Ticker table
+                if not ticker:
+                    ticker = Ticker(ticker_name=ticker_name, holding_type=Stock(ticker_name).get_holding_type())
+                    db.add(ticker)
+                    db.flush()
+
+                # TODO get account type from UI (store account type) and automatically associate holdings with account
+                # set account to 'Default' if no accounts exist
+                account = db.query(Account).first()
+
+                if not account:
+                    account = Account(account_name="Default", account_type='Unknown')
+                    db.add(account)
+                    db.flush()
+
+            # add new holding to Holdings table
+            new_holding = Holding(ticker_id=ticker.ticker_id, holding_size=holding_size,
+                                  account_name=account.account_name, date_added=date_added)
             db.add(new_holding)
 
     return redirect(url_for('holdings'))
