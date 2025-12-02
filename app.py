@@ -124,7 +124,7 @@ def edit_holdings():
 def delete_holdings(holding_id):
     with SessionLocal() as db:
         with db.begin():
-            holding = db.query(Holding).get(holding_id)
+            holding = db.get(Holding, holding_id)
             if holding:
                 db.delete(holding)
     #       add error catching for holding not found/nonexistent
