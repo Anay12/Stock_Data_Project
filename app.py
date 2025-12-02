@@ -68,7 +68,7 @@ def refresh_prices():
             for ticker in tickers_table:
                 stock = Stock(ticker.ticker_name)
                 current_price = stock.fetch_price()
-                ticker.price = current_price
+                ticker.current_price = current_price
 
     return redirect(url_for('holdings'))
 
