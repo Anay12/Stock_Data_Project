@@ -70,9 +70,9 @@ class Stock(yf.Ticker):
     def get_holding_type(self):
         try:
             holding_type = self.info.get('quoteType', 'Unknown')    # 'EQUITY', 'ETF', 'MUTUALFUND', 'Index'
+            return holding_type
         except Exception as e:
             return f"Could not retrieve holding type for {self.ticker}. Error: {e}"
-        return holding_type
 
     def is_fund(self):
         return self.get_holding_type() != 'EQUITY'
