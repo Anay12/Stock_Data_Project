@@ -15,6 +15,17 @@ class Stock(yf.Ticker):
         self.holding_type = holding_type
         self.avg_price = 0
 
+    def is_valid_ticker(self):
+        try:
+            if self.info:
+                return True
+        except KeyError as e:
+            print(f"{self.ticker} is not a valid ticker. Error: {e}")
+            return False
+
+    def fetch_price(self):
+        return self.info.get("regularMarketPrice")
+
     def market_value(self):
         price = self.info.get("regularMarketPrice")
         return price * self.quantity
