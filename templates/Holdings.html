@@ -91,10 +91,10 @@
                         <button type="button" class="btn btn-primary btn-100"
                                 data-bs-toggle="modal" data-bs-target="#editModal"
                                 data-id = "{{ holding.holding_id }}"
-                                data-ticker = "{{ holding.ticker.ticker_name }}"
-                                data-holdingtype="{{ holding.ticker.holding_type }}"
-                                data-holdingsize="{{ holding.holding_size }}"
-                                data-dateedited = "{{ holding.date_edited }}"
+                                data-ticker_name = "{{ holding.ticker.ticker_name }}"
+                                data-holding_type="{{ holding.ticker.holding_type }}"
+                                data-holding_size="{{ holding.holding_size }}"
+                                data-date_edited = "{{ holding.date_edited }}"
                                 data-delete-url="{{ url_for('delete_holdings', holding_id=holding.holding_id) }}">
                             Edit
                         </button>
