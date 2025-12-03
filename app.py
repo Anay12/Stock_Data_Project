@@ -77,6 +77,7 @@ def add_holding():
     ticker_name = request.form["ticker_name"].strip().upper()
     holding_type = request.form["holding_type"]
     holding_size = float(request.form["holding_size"])
+    purchase_price = request.form["purchase_price"]
     # date_added = request.form["date_added"]
     # date_py = datetime.strptime(date_added, "%Y-%m-%d")
     date_added = datetime.now()
