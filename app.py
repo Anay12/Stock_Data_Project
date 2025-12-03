@@ -45,7 +45,22 @@ def index():
 @cache.cached()
 def holdings():
     with SessionLocal() as db:
-        holdings_table = db.query(Holding).options(joinedload(Holding.ticker)).all()
+        # with db.begin():
+        stmt = select(Holding).options(joinedload(Holding.ticker))
+        holdings_table = db.execute(stmt).scalars().all()
+
+        for holding in holdings_table:
+            # stock = Stock(holding.ticker.ticker_name)
+            # current_price = stock.fetch_price()
+            price_diff = holding.ticker.current_price - holding.purchase_price
+            holding.exact_gain = price_diff * holding.holding_size
+            holding.percent_gain = price_diff / holding.purchase_price
+    db.commit()
+
+    ticker_holdings = defaultdict(list)
+    for holding in holdings_table:
+        ticker_holdings[holding.ticker.ticker_name].append(holding)
+
 
     with engine.connect() as conn:
         query = select(Holding.holding_id,
