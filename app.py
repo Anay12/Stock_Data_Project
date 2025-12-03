@@ -108,10 +108,10 @@ def add_holding():
             # set account to 'Default' if no accounts exist
             account = db.query(Account).first()
 
-                if not account:
-                    account = Account(account_name="Default", account_type='Unknown')
-                    db.add(account)
-                    db.flush()
+            if not account:
+                account = Account(account_name="Default", account_type='Unknown')
+                db.add(account)
+                db.flush()
 
             # add new holding to Holdings table
             new_holding = Holding(ticker_id=ticker.ticker_id, holding_size=holding_size, purchase_price=purchase_price,
