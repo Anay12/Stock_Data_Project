@@ -104,7 +104,7 @@ def add_holding():
                     db.flush()
 
             # add new holding to Holdings table
-            new_holding = Holding(ticker_id=ticker.ticker_id, holding_size=holding_size,
+            new_holding = Holding(ticker_id=ticker.ticker_id, holding_size=holding_size, purchase_price=purchase_price,
                                   account_name=account.account_name, date_added=date_added)
             db.add(new_holding)
 
