@@ -33,7 +33,7 @@ class Ticker(Base):
     ticker_id = Column(Integer, primary_key=True)
     ticker_name = Column(String, unique=True, nullable=False)
     holding_type = Column(String)
-    price = Column(Float)
+    current_price = Column(Float)
 
     holdings = relationship("Holding", back_populates="ticker", cascade="all, delete-orphan")
 
