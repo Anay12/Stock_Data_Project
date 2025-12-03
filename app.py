@@ -95,9 +95,18 @@ def add_holding():
                     db.add(ticker)
                     db.flush()
 
-                # TODO get account type from UI (store account type) and automatically associate holdings with account
-                # set account to 'Default' if no accounts exist
-                account = db.query(Account).first()
+                # TODO eventually replace this with 'buy' screen that automatically gets price at purchase time or
+                #  some other method of getting accurate purchase price
+                # if no purchase price provided, use last market price
+                # (included for compatability reasons, not for final use)
+                if not purchase_price:
+                    purchase_price = stock.fetch_price()
+                else:
+                    purchase_price = float(purchase_price)
+
+            # TODO get account type from UI (store account type) and automatically associate holdings with account
+            # set account to 'Default' if no accounts exist
+            account = db.query(Account).first()
 
                 if not account:
                     account = Account(account_name="Default", account_type='Unknown')
