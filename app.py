@@ -85,7 +85,8 @@ def add_holding():
     with SessionLocal() as db:
         with db.begin():
             # validate ticker name
-            if Stock(ticker_name).is_valid_ticker():
+            stock=Stock(ticker_name)
+            if stock.is_valid_ticker():
                 ticker = db.query(Ticker).filter(Ticker.ticker_name == ticker_name).first()
 
                 # add new tickers to Ticker table
