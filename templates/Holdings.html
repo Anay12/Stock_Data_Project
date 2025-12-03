@@ -100,7 +100,19 @@
                             Edit
                         </button>
                     </td>
-                    <td>{{ holding.ticker.ticker_name }}</td>
+                    <td>
+                        <button type="button" class="btn btn-100"
+                                data-bs-toggle="modal" data-bs-target="#holdings_list_modal"
+                                data-ticker_name="{{ holding.ticker.ticker_name }}"
+                                data-holdings="{{ ticker_holdings }}"
+                                data-date = "{{ holding.date_added }}"
+                                data-quantity = "{{ holding.holding_size }}"
+                                data-price = "{{ holding.ticker.current_price }}"
+                                data-exact_gain = "{{ holding.exact_gain }}"
+                                data-percent_gain = "{{ holding.percent_gain }}">
+                            {{ holding.ticker.ticker_name }}
+                        </button>
+                    </td>
                     <td>{{ holding.ticker.holding_type }}</td>
                     <td>{{ holding.ticker.current_price }} </td>
                     <td>{{ holding.holding_size }}</td>
