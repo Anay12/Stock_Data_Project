@@ -72,7 +72,7 @@ def holdings():
     fig = px.pie(holdings_df, names='ticker_name', values='holding_size', hole=0.3)
     holdings_pie = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
 
-    return render_template('Holdings.html', holdings=holdings_table, holdings_pie=holdings_pie)
+    return render_template('Holdings.html', holdings=holdings_table, holdings_pie=holdings_pie, ticker_holdings=ticker_holdings)
 
 @app.route('/Holdings/refresh-prices', methods=["POST"])
 def refresh_prices():
