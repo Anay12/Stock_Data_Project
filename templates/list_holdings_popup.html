@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<div class="modal" id="holdings_list_modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Holding</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul id="holdingsList">
+
+                </ul>
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <td>Holding Id</td>
+                            <td>Date</td>
+                            <td>Quantity</td>
+                            <td>Price</td>
+                            <td>Gain/(Loss) $</td>  <!-- gain = (current_price - purchase_price) * quantity -->
+                            <td>Gain/(Loss) %</td>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for holding in ticker_holdings %}
+                        <tr>
+
+                            <td>{{ data-date }}</td>
+                            <td>{{ data-quantity }}</td>
+                            <td>{{ data-price }}</td>
+                            <td>{{ data-exact_gain }}</td>
+                            <td>{{ data-percent_gain }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const holdings_list_modal_el = document.getElementById("holdings_list_modal");
+    holdings_list_modal_el.addEventListener('show.bs.modal', event => {
+        const button = event.relatedTarget;
+
+        ticker_name = button.getAttribute("data-ticker_name")
+        holdings_table = button.getAttribute("data-holdings")
+        date_added = button.getAttribute("data-date")
+        holding_size = button.getAttribute("data-quantity")
+        current_price = button.getAttribute("data-price")
+        exact_gain = button.getAttribute("data-exact_gain")
+        percent_gain = button.getAttribute("data-percent_gain")
+
+        document.getElementById('modalTitle').textContent = ticker_name + ' Holdings';
+
+        const holdingsList = document.getElementById('holdingsList');
+        document.getElementById()
+
+        holdingsList.innerHTML = `
+            <li>Ticker Name: ${ticker_name}</li>
+            <li>Date Added: ${date_added}</li>
+            <li>Quantity: $${holding_size}</li>
+            <li>Current Price: ${current_price}</li>
+            <li>Exact Gain: $${exact_gain}</li>
+            <li>Percent Gain: ${percent_gain}</li>
+        `;
+    });
+
+</script>
+
+
+</html>
