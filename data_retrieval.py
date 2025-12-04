@@ -25,7 +25,8 @@ def retrieve_dividends():
         return divs_df
 
     with ThreadPoolExecutor(max_workers=4) as executor:
-        future_to_ticker = {executor.submit(fetch_dividends, ticker): ticker for ticker in holdings_df['ticker'].unique()}
+        future_to_ticker = {executor.submit(fetch_dividends, ticker): ticker for ticker in holdings_df[
+            'ticker_name'].unique()}
 
         for future in as_completed(future_to_ticker):
             try:
@@ -54,7 +55,7 @@ def prices_OHLC():
         return stock_price_df
 
     prices_list = []
-    tickers = holdings_df['ticker'].unique()
+    tickers = holdings_df['ticker_name'].unique()
 
     for ticker in tickers:
         try:
