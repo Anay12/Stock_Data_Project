@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_caching import Cache
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import os
@@ -14,7 +15,7 @@ import plotly.graph_objects as go
 import plotly.io as pio
 
 from Database.database import SessionLocal, engine
-from Database.models import Holding
+from Database.models import Holding, Ticker, Account
 from stock import Stock
 from data_retrieval import retrieve_dividends, prices_OHLC
 
