@@ -62,8 +62,9 @@
             {{ holdings_pie|safe }}
         </div>
 
-        <!-- table with all holdings -->
+
         <h2>Holdings</h2>
+        <!-- button to refresh prices -->
         <div class="container">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <form method="POST" action="{{ url_for('refresh_prices') }}" style="display: inline;">
