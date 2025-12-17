@@ -23,7 +23,7 @@ class Stock(yf.Ticker):
             print(f"{self.ticker} is not a valid ticker. Error: {e}")
             return False
 
-    def fetch_price(self):
+    def fetch_price(self) -> float:
         return self.info.get("regularMarketPrice")
 
     def market_value(self):
