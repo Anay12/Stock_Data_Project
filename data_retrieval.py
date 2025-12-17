@@ -4,14 +4,18 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 from sqlalchemy import select
 from Database.database import engine
-from Database.models import Holding
+from Database.models import Holding, Ticker
 from stock import Stock
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 def get_holdings_df():
     with engine.connect() as conn:
-        holdings_df = pd.read_sql(select(Holding), conn)
+        query = select(Holding.holding_id,
+                       Ticker.ticker_name).join(
+            Ticker, Ticker.ticker_id==Holding.holding_id)
+
+        holdings_df = pd.read_sql(query, conn)
     return holdings_df
 
 def retrieve_dividends():
