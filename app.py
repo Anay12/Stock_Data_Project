@@ -33,47 +33,57 @@ def inject_active_page():
     return {"active_page": request.endpoint}
 
 @app.route('/')
-@cache.cached()
+# @cache.cached()
 def index():
     # News panel
 
     # Portfolio breakdown by type
     # classification ['Aggressive growth', 'Growth', 'Balanced', 'Conservative', 'Very conservative']
+    with engine.connect() as conn:
+        query = select(Ticker)
+        tickers = pd.read_sql(query, conn)
+    # with SessionLocal() as db:
+    #     with db.begin():
+    #         tickers = db.execute(select(Ticker)).scalars().all()
 
-    return render_template('index.html')
+    tickers_html = tickers.to_html(classes="table table-bordered", index=False)
+
+    return render_template('index.html', tickers=tickers_html)
 
 @app.route('/Holdings')
-@cache.cached()
+# @cache.cached(timeout=100)
 def holdings():
     with SessionLocal() as db:
         # with db.begin():
         stmt = select(Holding).options(joinedload(Holding.ticker))
         holdings_table = db.execute(stmt).scalars().all()
+        tickers = db.execute(select(Ticker)).scalars().all()
 
+        raw = {}
         for holding in holdings_table:
-            # stock = Stock(holding.ticker.ticker_name)
-            # current_price = stock.fetch_price()
-            price_diff = holding.ticker.current_price - holding.purchase_price
-            holding.exact_gain = price_diff * holding.holding_size
-            holding.percent_gain = price_diff / holding.purchase_price
-    db.commit()
+            raw.setdefault(holding.ticker.ticker_name, []).append({
+                'holding_id': holding.holding_id,
+                'date_added': holding.date_added,
+                'holding_size': holding.holding_size,
+                'purchase_price': holding.purchase_price,
+                'exact_gain': holding.exact_gain,
+                'percent_gain': holding.percent_gain
+            })
 
-    ticker_holdings = defaultdict(list)
-    for holding in holdings_table:
-        ticker_holdings[holding.ticker.ticker_name].append(holding)
+        # ticker_holdings = {k: [serialize_holding(h) for h in v] for k, v in raw.items()}
 
+        with engine.connect() as conn:
+            query = select(Holding.holding_id,
+                           Holding.holding_size,
+                           Ticker.ticker_name).join(
+                Ticker, Ticker.ticker_id == Holding.ticker_id)
+            holdings_df = pd.read_sql(query, conn)
 
-    with engine.connect() as conn:
-        query = select(Holding.holding_id,
-                       Holding.holding_size,
-                       Ticker.ticker_name).join(
-            Ticker, Ticker.ticker_id == Holding.ticker_id)
-        holdings_df = pd.read_sql(query, conn)
+        fig = px.pie(holdings_df, names='ticker_name', values='holding_size', hole=0.3)
+        holdings_pie = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
 
-    fig = px.pie(holdings_df, names='ticker_name', values='holding_size', hole=0.3)
-    holdings_pie = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
-
-    return render_template('Holdings.html', holdings=holdings_table, holdings_pie=holdings_pie, ticker_holdings=ticker_holdings)
+        return render_template('Holdings.html', holdings=holdings_table, holdings_pie=holdings_pie,
+                               ticker_tables=raw, tickers=tickers)
 
 @app.route('/Holdings/refresh-prices', methods=["POST"])
 def refresh_prices():
@@ -186,6 +196,9 @@ def dividends():
 @app.route('/Performance')
 @cache.cached()
 def performance():
+
+    """ Use optimization -- set a desired return and budget and optimize portfolio to achieve the return """
+
 
     return render_template('Performance.html')
 

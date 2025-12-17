@@ -8,68 +8,55 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <ul id="holdingsList">
+                {% for ticker_name, rows in ticker_tables.items() %}
 
-                </ul>
-                <table class="table table-bordered">
+                <table id = "table-{{ticker_name}}" class="table table-bordered d-none">
                     <thead class="table-light">
                         <tr>
-                            <td>Holding Id</td>
-                            <td>Date</td>
-                            <td>Quantity</td>
-                            <td>Price</td>
-                            <td>Gain/(Loss) $</td>  <!-- gain = (current_price - purchase_price) * quantity -->
-                            <td>Gain/(Loss) %</td>
+                            <th>id</th>
+                            <th>Date Added</th>
+                            <th>Quantity</th>
+                            <th>Purchase Price</th>
+                            <th>Gain/(Loss) $</th>
+                            <th>Gain/(Loss) %</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        {% for holding in ticker_holdings %}
+                        {% for holding in rows %}
                         <tr>
-
-                            <td>{{ data-date }}</td>
-                            <td>{{ data-quantity }}</td>
-                            <td>{{ data-price }}</td>
-                            <td>{{ data-exact_gain }}</td>
-                            <td>{{ data-percent_gain }}</td>
+                            <td>{{ holding.holding_id }}</td>
+                            <td>{{holding.date_added}}</td>
+                            <td>{{holding.holding_size}}</td>
+                            <td>{{holding.purchase_price}} </td>
+                            <td>{{ holding.exact_gain }}</td>
+                            <td>{{ holding.percent_gain }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
+                {% endfor %}
+
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    const holdings_list_modal_el = document.getElementById("holdings_list_modal");
-    holdings_list_modal_el.addEventListener('show.bs.modal', event => {
+    document.getElementById("holdings_list_modal").addEventListener('show.bs.modal', function(event) {
         const button = event.relatedTarget;
+        const targetId = button.getAttribute('data-table');
 
-        ticker_name = button.getAttribute("data-ticker_name")
-        holdings_table = button.getAttribute("data-holdings")
-        date_added = button.getAttribute("data-date")
-        holding_size = button.getAttribute("data-quantity")
-        current_price = button.getAttribute("data-price")
-        exact_gain = button.getAttribute("data-exact_gain")
-        percent_gain = button.getAttribute("data-percent_gain")
+        this.querySelector('.modal-title').textContent = button.getAttribute('data-ticker_name');
 
-        document.getElementById('modalTitle').textContent = ticker_name + ' Holdings';
+        this.querySelectorAll('.modal-body table').forEach(table => {
+            table.classList.add('d-none');
+        });
 
-        const holdingsList = document.getElementById('holdingsList');
-        document.getElementById()
-
-        holdingsList.innerHTML = `
-            <li>Ticker Name: ${ticker_name}</li>
-            <li>Date Added: ${date_added}</li>
-            <li>Quantity: $${holding_size}</li>
-            <li>Current Price: ${current_price}</li>
-            <li>Exact Gain: $${exact_gain}</li>
-            <li>Percent Gain: ${percent_gain}</li>
-        `;
+        const selectedTable = this.querySelector(targetId);
+        if (selectedTable) {
+            selectedTable.classList.remove('d-none');
+        }
     });
 
 </script>
-
-
-</html>
