@@ -2,10 +2,8 @@ import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-from datetime import datetime
-from datetime import date
-from functions import date_years_ago, yesterday_date
-# from Database.models import Holding
+from datetime import date, datetime
+from functions import date_years_ago
 
 
 class Stock(yf.Ticker):

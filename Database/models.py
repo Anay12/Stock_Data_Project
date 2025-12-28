@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey
 from sqlalchemy.orm import relationship
 from Database.database import Base
 from datetime import datetime
-# from Stock import Stock
 
 class Holding(Base): # all owned holdings (each transaction)
     __tablename__ = "holdings"
