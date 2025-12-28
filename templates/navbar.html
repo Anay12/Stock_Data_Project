@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 
 <header>
-    <h1> Stock Portfolio Project </h1>
+<!--    <h1> Stock Portfolio Project </h1>-->
 </header>
 
-<nav>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <a class="navbar-brand" href="/">
+        Stock Portfolio Project
+    </a>
     <a href="{{ url_for('index') }}" class="{% if active_page == 'index' %}active{% endif %}">
         Home
     </a>
