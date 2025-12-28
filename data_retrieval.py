@@ -1,6 +1,5 @@
 import pandas_datareader as pdr
 import pandas as pd
-import matplotlib.pyplot as plt
 import yfinance as yf
 from sqlalchemy import select
 from Database.database import engine
@@ -11,9 +10,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def get_holdings_df():
     with engine.connect() as conn:
-        query = select(Holding.holding_id,
+        query = select(Holding.ticker_id,
                        Ticker.ticker_name).join(
-            Ticker, Ticker.ticker_id==Holding.holding_id)
+            Ticker, Ticker.ticker_id==Holding.ticker_id)
 
         holdings_df = pd.read_sql(query, conn)
     return holdings_df
@@ -35,6 +34,8 @@ def retrieve_dividends():
         for future in as_completed(future_to_ticker):
             try:
                 divs_df = future.result()
+                ticker = future_to_ticker[future]
+                print(f"Successfully added dividend data for {ticker}")
                 dividends_list.append(divs_df)
             except Exception as e:
                 ticker = future_to_ticker[future]
@@ -87,5 +88,6 @@ def prices_OHLC():
     # pivot_prices_df = prices_df.pivot(index='Date', columns='Company', values='Close')
 
     return prices_df
+
 
 
