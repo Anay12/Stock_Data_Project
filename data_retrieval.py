@@ -17,6 +17,11 @@ def get_holdings_df():
         holdings_df = pd.read_sql(query, conn)
     return holdings_df
 
+def get_unique_tickers():
+    holdings_df = get_holdings_df()
+    return holdings_df['ticker_name'].unique()
+
+
 def retrieve_dividends():
     holdings_df = get_holdings_df()
     dividends_list = []
