@@ -112,11 +112,15 @@ def prices_OHLC():
     prices_list = []
     tickers = holdings_df['ticker_name'].unique()
 
-    for ticker in tickers:
-        try:
-            prices_list.append(fetch_prices(ticker))
-        except Exception as e:
-            print(f"Error fetching prices for {ticker}: {e}")
+    with ProcessPoolExecutor(max_workers=4) as executor:
+        future_to_ticker = {executor.submit(fetch_prices, ticker, period): ticker for ticker in unique_tickers}
+
+        for future in as_completed(future_to_ticker):
+            ticker = future_to_ticker[future]
+            try:
+                prices_list.append(future.result())
+            except Exception as e:
+                print(f"Error fetching prices for {ticker}: {e}")
 
     # with ThreadPoolExecutor(max_workers=4) as executor:
     #     future_to_ticker = {executor.submit(fetch_prices, ticker): ticker for ticker in holdings_df['ticker'].unique()}
