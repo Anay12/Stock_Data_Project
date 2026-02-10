@@ -17,7 +17,7 @@ import plotly.io as pio
 from Database.database import SessionLocal, engine
 from Database.models import Holding, Ticker, Account
 from stock import Stock
-from data_retrieval import retrieve_dividends, prices_OHLC
+from data_retrieval import retrieve_dividends, prices_OHLC, get_1d_performance
 
 app = Flask(__name__)
 
@@ -118,27 +118,30 @@ def add_holding():
     # date_py = datetime.strptime(date_added, "%Y-%m-%d")
     date_added = datetime.now()
 
+    # validate ticker name
+    stock=Stock(ticker_name)
+    if not stock.is_valid_ticker():
+        return redirect(url_for('holdings'))
+
     with SessionLocal() as db:
         with db.begin():
-            # validate ticker name
-            stock=Stock(ticker_name)
-            if stock.is_valid_ticker():
-                ticker = db.query(Ticker).filter(Ticker.ticker_name == ticker_name).first()
+            ticker = db.query(Ticker).filter(Ticker.ticker_name == ticker_name).first()
 
-                # add new tickers to Ticker table
-                if not ticker:
-                    ticker = Ticker(ticker_name=ticker_name, holding_type=Stock(ticker_name).get_holding_type())
-                    db.add(ticker)
-                    db.flush()
+            # add new tickers to Ticker table
+            if not ticker:
+                ticker = Ticker(ticker_name=ticker_name, holding_type=Stock(ticker_name).get_holding_type())
+                db.add(ticker)
+                db.flush()
 
-                # TODO eventually replace this with 'buy' screen that automatically gets price at purchase time or
-                #  some other method of getting accurate purchase price
-                # if no purchase price provided, use last market price
-                # (included for compatability reasons, not for final use)
-                if not purchase_price:
-                    purchase_price = stock.fetch_price()
-                else:
-                    purchase_price = float(purchase_price)
+            # TODO eventually replace this with 'buy' screen that automatically gets price at purchase time or
+            #  some other method of getting accurate purchase price
+            # if no purchase price provided, use last market price
+
+            # (included for compatability reasons, not for final use)
+            if not purchase_price:
+                purchase_price = stock.fetch_price()
+            else:
+                purchase_price = float(purchase_price)
 
             # TODO get account type from UI (store account type) and automatically associate holdings with account
             # set account to 'Default' if no accounts exist
