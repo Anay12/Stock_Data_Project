@@ -108,6 +108,12 @@ def fetch_prices(ticker, period):
     stock_price_df.columns=['Date', 'Close', 'High', 'Low', 'Open', 'Volume', 'Company']
     return stock_price_df
 
+def prices_OHLC(period) -> pd.DataFrame:
+    """
+    Retrieve OHLCV price data for a certain period for all tickers
+    :return: pd.DataFrame(columns=['Date', 'Close', 'High', 'Low', 'Open', 'Volume', 'Company'])
+    """
+    unique_tickers = get_unique_tickers()
     prices_list = []
     tickers = holdings_df['ticker_name'].unique()
 
