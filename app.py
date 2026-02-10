@@ -35,6 +35,15 @@ def inject_active_page():
 @app.route('/')
 # @cache.cached()
 def index():
+    one_day_performance = get_1d_performance()
+
+    top_5_performers = one_day_performance.sort_values(by='1d_performance', ascending=False).head()
+    bottom_5_performers = one_day_performance.sort_values(by='1d_performance', ascending=True).head()
+
+    top_5_list = top_5_performers.to_dict('records')
+    bottom_5_list = bottom_5_performers.to_dict('records')
+    # odp = one_day_performance.to_html(classes="table table-bordered", index=False)
+
     # News panel
 
     # Portfolio breakdown by type
