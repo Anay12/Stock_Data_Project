@@ -99,15 +99,14 @@ def retrieve_dividends():
     return dividends_df
 
 
-def prices_OHLC():
-    holdings_df = get_holdings_df()
-
-    def fetch_prices(ticker):
-        stock = Stock(ticker)
-        stock_price_df = stock.prices_years_ago(1).reset_index()
-        stock_price_df['Company'] = ticker
-        stock_price_df.columns=['Date', 'Close', 'High', 'Low', 'Open', 'Volume', 'Company']
-        return stock_price_df
+def fetch_prices(ticker, period):
+    """Worker function for multiprocessing to fetch OHLCV data for a single ticker"""
+    # stock = Stock(ticker)
+    stock_price_df = yf.download(ticker, period=period).reset_index()
+    # stock_price_df = stock.prices_years_ago(1).reset_index()
+    stock_price_df['Company'] = ticker
+    stock_price_df.columns=['Date', 'Close', 'High', 'Low', 'Open', 'Volume', 'Company']
+    return stock_price_df
 
     prices_list = []
     tickers = holdings_df['ticker_name'].unique()
