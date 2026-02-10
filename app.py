@@ -102,9 +102,13 @@ def refresh_prices():
             tickers_table = db.query(Ticker).all()
 
             for ticker in tickers_table:
-                stock = Stock(ticker.ticker_name)
-                current_price = stock.fetch_price()
-                ticker.current_price = current_price
+                try:
+                    stock = Stock(ticker.ticker_name)
+                    current_price = stock.fetch_price()
+                    ticker.current_price = current_price
+                except Exception as e:
+                    print(f"Failed to update {ticker.ticker_name}: {e}")
+                    continue
 
     return redirect(url_for('holdings'))
 
