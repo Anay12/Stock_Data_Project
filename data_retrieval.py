@@ -21,6 +21,52 @@ def get_unique_tickers():
     holdings_df = get_holdings_df()
     return holdings_df['ticker_name'].unique()
 
+def fetch_performance(ticker):
+    """ Worker function for multiprocessing to fetch 1-day performance for a single ticker"""
+    try:
+        stock_price_df = yf.download(ticker, period='1mo', progress=False).reset_index()
+
+        if len(stock_price_df) < 2:
+            print(f"Insufficient data for {ticker}")
+            return None
+
+        today_close_price = float(stock_price_df['Close'].iloc[-1])
+        yesterday_close_price = float(stock_price_df['Close'].iloc[-2])
+        percent_change = ((today_close_price - yesterday_close_price) / yesterday_close_price) * 100
+
+        return pd.DataFrame({'Ticker':[ticker], '1d_performance':[percent_change]})
+    except Exception as e:
+        print(f"Error fetching {ticker}: {e}")
+        return None
+
+
+def get_1d_performance() -> pd.DataFrame:
+    """
+    get 1 day performance for all tickers in database
+    :return: pd.DataFrame(columns=['Ticker', '1d_performance'])
+    """
+    unique_tickers = get_unique_tickers()
+    one_day_performance = []
+
+    with ProcessPoolExecutor(max_workers=4) as executor:
+        future_to_ticker = {executor.submit(fetch_performance, ticker): ticker for ticker in unique_tickers}
+
+        for future in as_completed(future_to_ticker):
+            ticker = future_to_ticker[future]
+            try:
+                df_row = future.result()
+                if df_row is not None:
+                    one_day_performance.append(df_row)
+            except Exception as e:
+                print(f"Error calculating 1d performance for {ticker}: {e}")
+
+    if one_day_performance:
+        performance_df = pd.concat(one_day_performance, ignore_index=True)
+    else:
+        performance_df = pd.DataFrame(columns=['Ticker', '1d_performance'])
+
+
+    return performance_df
 
 def retrieve_dividends():
     holdings_df = get_holdings_df()
