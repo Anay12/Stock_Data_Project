@@ -5,7 +5,7 @@ from sqlalchemy import select
 from Database.database import engine
 from Database.models import Holding, Ticker
 from stock import Stock
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 
 
 def get_holdings_df():
