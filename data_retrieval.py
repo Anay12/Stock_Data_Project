@@ -69,6 +69,10 @@ def get_1d_performance() -> pd.DataFrame:
     return performance_df
 
 def retrieve_dividends():
+    """
+    function to return dividend information of all tickers
+    :return: pd.Dataframe(columns=['Date', 'Dividends', 'Company'])
+    """
     unique_tickers = get_unique_tickers()
     dividends_list = []
 
