@@ -57,7 +57,8 @@ def index():
 
     tickers_html = tickers.to_html(classes="table table-bordered", index=False)
 
-    return render_template('index.html', tickers=tickers_html)
+    return render_template('index.html', tickers=tickers_html, top_5_performers=top_5_performers,
+                           bottom_5_performers=bottom_5_list)
 
 @app.route('/Holdings')
 # @cache.cached(timeout=100)
