@@ -69,7 +69,7 @@ def get_1d_performance() -> pd.DataFrame:
     return performance_df
 
 def retrieve_dividends():
-    holdings_df = get_holdings_df()
+    unique_tickers = get_unique_tickers()
     dividends_list = []
 
     def fetch_dividends(ticker):
@@ -79,8 +79,7 @@ def retrieve_dividends():
         return divs_df
 
     with ThreadPoolExecutor(max_workers=4) as executor:
-        future_to_ticker = {executor.submit(fetch_dividends, ticker): ticker for ticker in holdings_df[
-            'ticker_name'].unique()}
+        future_to_ticker = {executor.submit(fetch_dividends, ticker): ticker for ticker in unique_tickers}
 
         for future in as_completed(future_to_ticker):
             ticker = future_to_ticker[future]
