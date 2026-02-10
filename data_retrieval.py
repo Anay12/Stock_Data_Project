@@ -22,7 +22,7 @@ def get_unique_tickers():
     return holdings_df['ticker_name'].unique()
 
 def fetch_performance(ticker):
-    """ Worker function for multiprocessing to fetch 1-day performance for a single ticker"""
+    """Worker function for multiprocessing to fetch 1-day performance for a single ticker"""
     try:
         stock_price_df = yf.download(ticker, period='1mo', progress=False).reset_index()
 
