@@ -83,13 +83,12 @@ def retrieve_dividends():
             'ticker_name'].unique()}
 
         for future in as_completed(future_to_ticker):
+            ticker = future_to_ticker[future]
             try:
                 divs_df = future.result()
-                ticker = future_to_ticker[future]
                 print(f"Successfully added dividend data for {ticker}")
                 dividends_list.append(divs_df)
             except Exception as e:
-                ticker = future_to_ticker[future]
                 print(f"Error fetching dividends for {ticker}: {e}")
 
     if dividends_list:
