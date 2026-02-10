@@ -115,7 +115,6 @@ def prices_OHLC(period) -> pd.DataFrame:
     """
     unique_tickers = get_unique_tickers()
     prices_list = []
-    tickers = holdings_df['ticker_name'].unique()
 
     with ProcessPoolExecutor(max_workers=4) as executor:
         future_to_ticker = {executor.submit(fetch_prices, ticker, period): ticker for ticker in unique_tickers}
