@@ -18,8 +18,36 @@
 
     <div class="container">
         <h2>Home</h2>
+        
+        <div class="d-inline-block w-auto">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5>Top 5 Performers (24h)</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Ticker</th>
+                                <th>Performance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for _, row in top_5_performers.iterrows() %}
+                            <tr>
+                                <td>{{ row['Ticker'] }} </td>
+                                <td class="text-success">+{{ "%.2f"|format(row['1d_performance']) }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-        <div>
+
+        <div class="container">
+            <h2>T5 Performers</h2>
 
         </div>
 
